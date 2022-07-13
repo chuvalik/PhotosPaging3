@@ -1,19 +1,15 @@
 package com.example.picturesapp.feature_search_photo.presentation.photos_list
 
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import com.example.picturesapp.R
 import com.example.picturesapp.core.ui.BaseFragment
 import com.example.picturesapp.databinding.FragmentPhotosListBinding
 import com.example.picturesapp.feature_search_photo.domain.model.ResultDomain
-import kotlinx.coroutines.flow.collect
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -28,19 +24,44 @@ class PhotosListFragment : BaseFragment<FragmentPhotosListBinding>() {
         setupAdapter()
 
         observeData()
+
+        setHasOptionsMenu(true)
     }
 
     private fun observeData() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.photos.collect { data ->
-                processData(data)
-            }
+        viewModel.photos.observe(viewLifecycleOwner) { data ->
+            adapter?.submitData(viewLifecycleOwner.lifecycle, data)
         }
     }
 
-    private suspend fun processData(data: PagingData<ResultDomain>) {
-        adapter?.submitData(data)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+
+        inflater.inflate(R.menu.menu_gallery, menu)
+
+        val searchItem = menu.findItem(R.id.actionSearch)
+        val searchView = searchItem.actionView as SearchView
+
+        setupOnQueryTextListener(searchView)
     }
+
+    private fun setupOnQueryTextListener(searchView: SearchView) {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    binding.recyclerView.scrollToPosition(0)
+                    viewModel.onSearch(query)
+                    searchView.clearFocus()
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+        })
+    }
+
 
     private fun setupAdapter() {
         adapter = PhotosListAdapter()
