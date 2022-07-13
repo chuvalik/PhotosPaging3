@@ -8,8 +8,11 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    viewModel {
-        PhotosListViewModel(repository = get())
+    viewModel { (handle: SavedStateHandle) ->
+        PhotosListViewModel(
+            repository = get(),
+            state = handle
+        )
     }
 
     viewModel { (handle: SavedStateHandle) ->
