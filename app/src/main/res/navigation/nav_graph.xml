@@ -9,5 +9,18 @@
         android:id="@+id/photos"
         android:name="com.example.picturesapp.feature_search_photo.presentation.photos_list.PhotosListFragment"
         android:label="fragment_photos_list"
-        tools:layout="@layout/fragment_photos_list" />
+        tools:layout="@layout/fragment_photos_list" >
+        <action
+            android:id="@+id/photos_to_detail"
+            app:destination="@id/detail" />
+    </fragment>
+    <fragment
+        android:id="@+id/detail"
+        android:name="com.example.picturesapp.feature_search_photo.presentation.photos_detail.PhotosDetailFragment"
+        android:label="fragment_photos_detail"
+        tools:layout="@layout/fragment_photos_detail" >
+        <argument
+            android:name="photo"
+            app:argType="com.example.picturesapp.feature_search_photo.domain.model.ResultDomain" />
+    </fragment>
 </navigation>

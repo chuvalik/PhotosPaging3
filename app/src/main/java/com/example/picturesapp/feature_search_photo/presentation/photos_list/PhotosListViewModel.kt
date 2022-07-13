@@ -1,14 +1,12 @@
 package com.example.picturesapp.feature_search_photo.presentation.photos_list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import com.example.picturesapp.feature_search_photo.domain.model.ResultDomain
+import androidx.paging.LoadState
 import com.example.picturesapp.feature_search_photo.domain.repository.PhotoRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 
 class PhotosListViewModel(
     private val repository: PhotoRepository

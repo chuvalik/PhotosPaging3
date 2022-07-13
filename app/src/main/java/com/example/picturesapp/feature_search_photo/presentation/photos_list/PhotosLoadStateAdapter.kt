@@ -9,7 +9,7 @@ import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.picturesapp.databinding.PhotoLoadStateFooterBinding
 
-class PhotoLoadStateAdapter : LoadStateAdapter<PhotoLoadStateAdapter.PhotoLoadStateViewHolder>() {
+class PhotosLoadStateAdapter : LoadStateAdapter<PhotosLoadStateAdapter.PhotoLoadStateViewHolder>() {
 
     class PhotoLoadStateViewHolder(
         private val binding: PhotoLoadStateFooterBinding

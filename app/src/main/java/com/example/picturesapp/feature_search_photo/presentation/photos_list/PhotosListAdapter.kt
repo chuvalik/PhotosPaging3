@@ -11,12 +11,16 @@ import com.example.picturesapp.R
 import com.example.picturesapp.databinding.PhotoItemBinding
 import com.example.picturesapp.feature_search_photo.domain.model.ResultDomain
 
-class PhotosListAdapter :
+class PhotosListAdapter(
+    private val onGoToDetail: (ResultDomain) -> Unit
+) :
     PagingDataAdapter<ResultDomain, PhotosListAdapter.PhotosViewHolder>(DiffCallback) {
 
     class PhotosViewHolder(
+        private val onGoToDetail: (ResultDomain) -> Unit,
         private val binding: PhotoItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
+
 
         fun bind(resultDomain: ResultDomain) {
             Glide.with(itemView)
@@ -26,12 +30,15 @@ class PhotosListAdapter :
                 .error(R.drawable.ic_launcher_background)
                 .into(binding.ivPhoto)
             binding.tvUsername.text = resultDomain.user.name
+
+            binding.root.setOnClickListener { onGoToDetail(resultDomain) }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotosViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return PhotosViewHolder(
+            onGoToDetail,
             PhotoItemBinding.inflate(layoutInflater, parent, false)
         )
     }

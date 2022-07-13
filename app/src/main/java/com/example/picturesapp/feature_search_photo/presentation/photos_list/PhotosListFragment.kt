@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import com.example.picturesapp.R
@@ -30,8 +32,12 @@ class PhotosListFragment : BaseFragment<FragmentPhotosListBinding>() {
 
     private fun observeData() {
         viewModel.photos.observe(viewLifecycleOwner) { data ->
-            adapter?.submitData(viewLifecycleOwner.lifecycle, data)
+            processData(data)
         }
+    }
+
+    private fun processData(data: PagingData<ResultDomain>) {
+        adapter?.submitData(viewLifecycleOwner.lifecycle, data)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -62,18 +68,30 @@ class PhotosListFragment : BaseFragment<FragmentPhotosListBinding>() {
         })
     }
 
-
     private fun setupAdapter() {
-        adapter = PhotosListAdapter()
+        adapter = PhotosListAdapter { result ->
+            processNavigationToDetail(result)
+        }
 
         binding.recyclerView.adapter = adapter?.withLoadStateHeaderAndFooter(
-            footer = PhotoLoadStateAdapter(),
-            header = PhotoLoadStateAdapter()
+            footer = PhotosLoadStateAdapter(),
+            header = PhotosLoadStateAdapter()
         )
+        binding.recyclerView.itemAnimator = null
 
         adapter?.addLoadStateListener { state ->
-            binding.progressBar.isVisible = state.refresh == LoadState.Loading
+            processLoadState(state)
         }
+    }
+
+    private fun processNavigationToDetail(result: ResultDomain) {
+        val action = PhotosListFragmentDirections.photosToDetail(result)
+        findNavController().navigate(action)
+    }
+
+    private fun processLoadState(state: CombinedLoadStates) {
+        binding.progressBar.isVisible = state.refresh is LoadState.Loading
+        binding.recyclerView.isVisible = state.refresh is LoadState.NotLoading
     }
 
     override fun initBinding(
